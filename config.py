@@ -8,3 +8,6 @@ first_piece_x, first_piece_y = 836, 433
 
 # Value of the next piece spawn point
 next_piece_x, next_piece_y = 696, 576
+
+# Value of the accept panel 
+accept_x, accept_y = 945,209

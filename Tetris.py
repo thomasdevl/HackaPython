@@ -134,18 +134,18 @@ class Tetris:
 
         # print("Shape: \n", shape)
 
-        for i in range(0, height):
-            if x == 0:
-                if shape[i][0] == 1:
-                    nContactsCote += 1
-            elif x + width == self.width:
-                if shape[i][-1] == 1:
-                    nContactsCote += 1
-            else:
-                if shape[i][0] == 1 and self.board[y - height + i + 1][x - 1] == 1:
-                    nContactsCote += 1
-                if shape[i][-1] == 1 and self.board[y - height + i + 1][x + width] == 1:
-                    nContactsCote += 1 
+        # for i in range(0, height):
+        #     if x == 0:
+        #         if shape[i][0] == 1:
+        #             nContactsCote += 1
+        #     elif x + width == self.width:
+        #         if shape[i][-1] == 1:
+        #             nContactsCote += 1
+        #     else:
+        #         if shape[i][0] == 1 and self.board[y - height + i + 1][x - 1] == 1:
+        #             nContactsCote += 1
+        #         if shape[i][-1] == 1 and self.board[y - height + i + 1][x + width] == 1:
+        #             nContactsCote += 1 
 
         for k in range(len(limit)):
             j = x + k

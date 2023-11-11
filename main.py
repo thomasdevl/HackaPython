@@ -36,7 +36,7 @@ class TetrisBot:
     def start_game(self):
         self.click(self.new_game_x, self.new_game_y)
         time.sleep(0.5)
-        self.click(945,209)
+        self.click(accept_x,accept_y)
         self.current_piece = self.get_pixel_color(self.first_piece_x, self.first_piece_y)
         self.next_piece = self.get_pixel_color(self.next_piece_x, self.next_piece_y)
         print(f"first piece type {self.color_to_piece[self.current_piece]}")
