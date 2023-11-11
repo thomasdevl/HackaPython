@@ -1,6 +1,8 @@
-import numpy as np
+import pyautogui
+import time
 
+time.sleep(2)
 
-game_matrix = np.zeros((22, 12), dtype=int)
-print(game_matrix)
-
+while True:
+    pyautogui.keyDown('down')
+    
