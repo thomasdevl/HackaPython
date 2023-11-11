@@ -1,6 +1,4 @@
 import pyautogui
-from PIL import ImageGrab
-from pynput import keyboard
 import numpy as np
 import time
 from rotation_dict import rot_dic
@@ -50,10 +48,10 @@ class TetrisBot:
 
     def play(self):
         # caclulate the best move
-
+        # TODO
         # => output : (bottom left cord, matrix of the piece)
+        
         # execute the best move
-
         # data_test form ==> (matrix of the piece, bottom left cord, nb_rot, nb_right)
         data =  ((20,4),
                 [[1,1],
@@ -64,6 +62,13 @@ class TetrisBot:
         move = self.calculate_moves(data)
 
         self.move_piece(move, data[2])
+
+        # update the gameboard 
+        # TODO
+
+        # update the current and next piece
+        self.current_piece = self.next_piece
+        self.next_piece = self.get_pixel_color(self.next_piece_x, self.next_piece_y)
 
         
     def calculate_moves(self, data):
