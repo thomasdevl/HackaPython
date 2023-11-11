@@ -2,44 +2,88 @@ import numpy as np
 import puzzles as pz
 
 class Tetris:
-    def __init__(self, width=12, height=20):
+    def __init__(self, width=12, height=20, weight_y=1, weight_hole=1, weight_contact=1):
         self.width = width
         self.height = height
         
-        self.weight_height = 1
-        self.weight_hole = 1
+        self.weight_y = weight_y
+        self.weight_hole = weight_hole
+        self.weight_contact = weight_contact
 
         self.board = np.zeros((self.height, self.width), dtype=np.int8)
         self.score = 0
         self.puzzle = pz.Puzzle()
 
     def add_piece(self, piece: str):
+        """
+        pre: the argument piece here is a character identificator of the piece
+        post: place the piece in the board as best as possible
+        """
         best_result = self.generate_max(piece)
-        # print("Best result:", best_result)
-        self.place_piece(best_result[1], best_result[2][0], best_result[2][1])
+        
+        if best_result != None:
+            self.place_piece(best_result[1], best_result[2][0], best_result[2][1])
+
         return (best_result[2],[arr.tolist() for arr in best_result[1][0]])
 
+
     def check_position(self, limit: tuple, x: int, y: int) -> bool:
-        # print("Limit:", limit)
-        # print("Pos:", x, y)
+        """
+        pre: limit is a tuple where each element indicates where is the first case for a given x with y position starting from the bottom
+        (x, y) the coordinates of the left-bottom corner of the piece
+        post: True if there is the place to drop the pice once else False if there are obstacles
+        """
+        
         if y + 1 == self.height:
             return False
         
         for i in range(len(limit)):
-            # print(x + i, y - limit[i] + 1):
             if self.board[y - limit[i] + 1][x + i] == 1:
                 return False
             
         return True
         
+    def get_score(self, shape: tuple, limit: tuple, x: int, y: int) -> int:
+        """
+        pre: shape is a description matrix of a piece, limit is a tuple that contains the limits of the piece
+        and (x, y) are the coordinates of the piece
+        post: returns the score of the placed piece
+        """
+        nholes = 0
+        ncontacts = 0
+    
+        width = len(shape)
+        height = len(shape[0])
+
+        for k in range(len(limit)):
+            j = x + k
+            
+            yp = y - limit[k] + 1
+            if yp == self.height or self.board[yp][x + k]:
+                ncontacts += 1
+            
+            for i in range(y - limit[k] + 1, self.height):
+                if self.board[i][j] == 0:
+                    nholes += 1
+                    
+        return self.weight_y * y \
+            - self.weight_hole * nholes \
+                + self.weight_contact * ncontacts
+        
     def place_dispo(self, dispo: tuple) -> tuple:
+        """
+        pre: dispo is a tuple that contains the informations of a piece
+            => first is the description matrix of the piece
+            => second is the limits so the list of distances between first case in the piece for a given x and the y coordinates
+        post:
+            A tuple that contains three informations, the best score gotten to place the piece, the piece and the coordinates of this placement
+            If no places is found returns None
+        """
+        
         shape = dispo[0]
         limit = dispo[1]
         width = len(shape[0])
         height = len(shape)
-
-        index_constraint = np.argmin(limit)
-
         best = None
         
         for x in range(0, self.width - width+1):
@@ -47,11 +91,12 @@ class Tetris:
                 # print("x, y:", x, y)
 
                 if not self.check_position(limit, x, y):
+                    # The piece is placed as low as possible for a given x and it checks
+                    # if this placement is better than the previous ones
                     score = self.get_score(shape, limit, x, y)
                     
                     if best == None or score > best[0]:
                         best = (score, dispo, (x, y))
-                        # print("Best:", best)
                     
                     break
                 
@@ -59,16 +104,21 @@ class Tetris:
                 
 
     def generate_max(self, piece: str) -> tuple:
+        """
+        pre: the argument piece here is a character identificator of the piece
+        post:
+            A tuple that contains three informations about the best place of the piece to do
+                => the score, the piece and the coordinates of this placement
+            If no places is found returns None
+        """
         dispositions = self.puzzle.dp.get(piece)
         
-        # (score, dispo, (x, y))
-        result = (-np.inf, None, None)
+        result = None
         
         for dispo in dispositions:
             tmp = self.place_dispo(dispo)
-            # print("Tmp:", tmp)
-            # print("Result:", result)
-            if result[0] < tmp[0]:
+
+            if result == None or result[0] < tmp[0]:
                 result = tmp
                 
         return result
@@ -143,8 +193,13 @@ class Tetris:
             self.update_line(update_line[i])
                         
     def update_line(self, line: int):
+        """
+        pre: line an array line of the board to update
+        post: update the targeted lines according the rules of the game
+        """
         for i in range(line, 0, -1):
-            self.board[i] = self.board[i-1]
+            self.board[i] = self.board[i - 1]
+            
         self.board[0] = np.zeros((1, self.width), dtype=np.int8)
 
     def print_board(self):
