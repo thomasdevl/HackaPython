@@ -70,6 +70,12 @@ class TetrisBot:
     
     def move_piece(self, move, rot):
         print(self.color_to_piece[self.current_piece])
+
+        print(f"rotating {rot} times")
+        for _ in range(rot):
+            pyautogui.keyDown('up')
+            time.sleep(0.05)
+
         if 0 < move:
             print(f"moving {abs(move)} left")
             for _ in range(abs(move)):
@@ -80,12 +86,7 @@ class TetrisBot:
             for _ in range(abs(move)):
                 pyautogui.keyDown('right')
                 time.sleep(0.05)
-
-        print(f"rotating {rot} times")
-        for _ in range(rot):
-            pyautogui.keyDown('up')
-            time.sleep(0.05)
-
+        
         print("dropping")
         pyautogui.keyDown('space')
 
