@@ -1,15 +1,15 @@
 import pyautogui
-import numpy as np
 import time
 from rotation_dict import rot_dic
 from Tetris import Tetris
+from config import *
 
 class TetrisBot:
     def __init__(self):
         self.screen_width, self.screen_height = pyautogui.size()
-        self.new_game_x, self.new_game_y = 723, 455
-        self.first_piece_x, self.first_piece_y = 836, 433
-        self.next_piece_x, self.next_piece_y = 696, 576
+        self.new_game_x, self.new_game_y = new_game_x, new_game_y
+        self.first_piece_x, self.first_piece_y = first_piece_x, first_piece_y
+        self.next_piece_x, self.next_piece_y = next_piece_x, next_piece_y
         self.color_to_piece = { (243, 176, 68): 'Z',
                                 (237, 112, 45): 'Z',
                                 (86, 162, 243): 'J',
@@ -50,9 +50,10 @@ class TetrisBot:
     def play(self):
         # caclulate the best move
         data = self.Tetris.add_piece(self.color_to_piece[self.current_piece])
-        
+ 
         # execute the best move
         move = self.calculate_moves(data)
+        
         rot = rot_dic[str(data[1]).replace(" ", "")][1]
         self.move_piece(move, rot)
 

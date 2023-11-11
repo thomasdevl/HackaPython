@@ -24,6 +24,9 @@ class Tetris:
         if best_result != None:
             self.place_piece(best_result[1], best_result[2][0], best_result[2][1])
 
+        return (best_result[2],[arr.tolist() for arr in best_result[1][0]])
+
+
     def check_position(self, limit: tuple, x: int, y: int) -> bool:
         """
         pre: limit is a tuple where each element indicates where is the first case for a given x with y position starting from the bottom
