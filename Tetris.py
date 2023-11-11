@@ -158,7 +158,7 @@ class Tetris:
                 if self.board[i][j] == 0:
                     nholes += 1
                     
-        ncases_beyond *= self.weight_height
+        ncases_beyond *= self.weight_y
         nholes *= self.weight_hole
                     
         return ncases_beyond - nholes + nContactsSol + nContactsCote
@@ -180,15 +180,11 @@ class Tetris:
                 # test += 1
                 if shape[i][j] != 1:
                     continue
-                # print(test)
-                self.board[y + i - height + 1][x + j] += 1
-                # print("Placed at:", x + j, y + i - height + 1)
-                # print("Sum of line:", y + i - height + 1, np.sum(self.board[y-j]))
                 
+                self.board[y + i - height + 1][x + j] += 1
                 if np.sum(self.board[y + i - height + 1]) == self.width:
-                    # print("Line completed!")
-                    # self.print_board()
                     update_line[i] = y + i - height + 1
+
         for i in range(height):  
             self.update_line(update_line[i])
                         
