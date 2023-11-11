@@ -17,11 +17,11 @@ class Tetris:
     def check_position(self, limit: tuple, x: int, y: int) -> bool:
         # print("Limit:", limit)
         # print("Pos:", x, y)
-        if y + 1 == self.height:
-            return True
+        if y == self.height:
+            return 
         for i in range(len(limit)):
             # print(x + i, y - limit[i] + 1):
-            if self.board[y - limit[i]][x + i] == 1:
+            if self.board[y - limit[i] + 1][x + i] == 1:
                 return False
             
         return True
@@ -29,29 +29,21 @@ class Tetris:
     def place_dispo(self, dispo: tuple) -> tuple:
         shape = dispo[0]
         limit = dispo[1]
-
         width = len(shape[0])
         height = len(shape)
 
-        index_constraint = limit.index(min(limit))
-
         best = None
         
-        for x in range(0, self.width - width):
-            for y in range(0+height-1, self.height):
-                # print("x, y:", x, y)
-                if y - limit[index_constraint] != self.height - 1:
-                    if self.board[y - limit[index_constraint] + 1][x] == 0:
-                        # print("Continue")
-                        continue
-
+        for x in (0, self.width - width):
+            for y in range(0+height, self.height):
                 if self.check_position(limit, x, y):
                     score = self.get_score(shape, limit, x, y)
                     
                     if best == None or score > best[0]:
                         best = (score, dispo, (x, y))
-                        print("Best:", best)
-                break
+                    continue
+                else:
+                    break
                 
         return best             
                 
@@ -60,12 +52,11 @@ class Tetris:
         dispositions = self.puzzle.dp.get(piece)
         
         # (score, dispo, (x, y))
-        result = (-np.inf, None, None)
+        result = None
         
         for dispo in dispositions:
             tmp = self.place_dispo(dispo)
-            print("Tmp:", tmp)
-            print("Result:", result)
+
             if result[0] < tmp[0]:
                 result = tmp
                 
@@ -86,7 +77,7 @@ class Tetris:
         for k in range(len(limit)):
             j = x + k
             
-            for i in range(y - limit[k] + 1, self.height):
+            for i in range(y - limit[k] + 1, len(self.board)):
                 if self.board[i][j] == 0:
                     weight_hole += 1
                     
@@ -112,7 +103,7 @@ class Tetris:
     def print_board(self):
         print(self.board)        
         
-    t = Tetris(width=4, height=4)__main__":
+if __name__ == "__main__":
     t = Tetris()
     Tetris.set_weight_hole_constant(2)
     
@@ -128,5 +119,18 @@ class Tetris:
          [1, 1],
          [1, 0]],
         [0, 1],
+        1, 2
+    ))
+    
+    print(t.get_score(
+        [[1, 0, 0],
+         [1, 1, 1]],
+        [0, 0, 0],
         1, 1
+    ))
+    
+    print(t.get_score(
+        [[1, 1, 1, 1]],
+        [0, 0, 0, 0],
+        0, 0
     ))

@@ -1,111 +1,166 @@
 import numpy as np
 
 class Puzzle:
-    I = np.array((
+    I =(
         (
-            (1, 1, 1, 1)
-        ,),
+            np.array((1, 1, 1, 1), np.uint8), 
+            np.array((0, 0, 0, 0), np.uint8)
+        ),
         (
-            (1),
-            (1),
-            (1),
-            (1)
+        np.array(
+            ((
+            1,
+            1,
+            1,
+            1
+            ))
+        , np.uint8), 
+        np.array((0,), np.uint8)
         )
-    ), np.uint8)
+    )
     
-    O = np.array((
-        ((
+    O = ((
+        np.array((
             (1, 1),
             (1, 1)
-        ,), np.array((0, 0), np.uint0))
-    ,), np.uint8)
+        ), np.uint8), 
+        np.array((0, 0), np.uint8)
+        )
+    )
     
-    T = np.array((
-        ((
+    T = (
+        (
+        np.array((
             (0, 1, 0),
             (1, 1, 1)
-        ), np.array((0, 0, 0), np.uint8)),
-        ((
-            (1, 0),
+        ), np.uint8), 
+        np.array((0, 0, 0), np.uint8)
+        ),
+        (
+        np.array((
+            (0, 1),
             (1, 1),
-            (1, 0)
-        ), np.array((0, 1), np.uint8)),
-        ((
+            (0, 1)
+        ), np.uint8), 
+        np.array((1, 0), np.uint8)
+        ),
+        (
+        np.array((
             (1, 1, 1),
             (0, 1, 0)
-        ), np.array((1, 0, 1), np.uint8)),
-        ((
-            (0, 1),
-            (1, 1),
-            (0, 1)
-        ), np.array((1, 0), np.uint8))
-    ))
-    
-    L = np.array((
+        ), np.uint8), 
+        np.array((1, 0, 1), np.uint8)
+        ),
         (
+        np.array((
+            (1, 0),
+            (1, 1),
+            (1, 0)
+        ), np.uint8), 
+        np.array((0, 1), np.uint8)
+        )
+    )
+    
+    L = (
+        (
+        np.array((
             (1, 1, 1),
             (1, 0, 0)
+        ), np.uint8), 
+        np.array((0, 1, 1), np.uint8)
         ),
         (
-            (1, 1),
-            (0, 1),
-            (0, 1)
+        np.array((
+            (1, 0),
+            (1, 0),
+            (1, 1)
+        ), np.uint8), 
+        np.array((0, 0), np.uint8)
         ),
         (
+        np.array((
             (0, 0, 1),
             (1, 1, 1)
+        ), np.uint8),
+        np.array((0, 0, 0), np.uint8)
         ),
         (
-            (1, 0),
-            (1, 0),
-            (1, 1)
+        np.array((
+            (1, 1),
+            (0, 1),
+            (0, 1)
+        ), np.uint8), 
+        np.array((2, 0), np.uint8)
         )
-    ), np.uint8)
+    )
     
-    J = np.array((
+    J = (
         (
+        np.array((
             (1, 1, 1),
             (0, 0, 1)
+        ), np.uint8),
+        np.array((1, 1, 0), np.uint8)
         ),
         (
-            (0, 1),
-            (0, 1),
-            (1, 1)
-        ),
-        (
-            (1, 0, 0),
-            (1, 1, 1)
-        ),
-        (
+        np.array((
             (1, 1),
             (1, 0),
             (1, 0)
-        )
-    ), np.uint8)
-    
-    Z = np.array((
-        (
-            (1, 1, 0),
-            (0, 1, 1)
+        ), np.uint8),
+        np.array((0, 2), np.uint8)
         ),
         (
+        np.array((
+            (1, 0, 0),
+            (1, 1, 1)
+        ), np.uint8),
+        np.array((0, 0, 0), np.uint8)
+        ),
+        (
+        np.array((
+            (0, 1),
+            (0, 1),
+            (1, 1)
+        ), np.uint8),
+        np.array((0, 0), np.uint8)
+        )
+    )
+    
+    Z = (
+        (
+        np.array((
+            (1, 1, 0),
+            (0, 1, 1)
+        ), np.uint8),
+        np.array((1, 0, 0), np.uint8)
+        ),
+        (
+        np.array((
             (0, 1),
             (1, 1),
             (1, 0)
+        ), np.uint8),
+        np.array((0, 1), np.uint8)
         )
-    ), np.uint8)
+    )
     
-    S = np.array((
-        (
+    S = (
+        (np.array((
             (0, 1, 1),
             (1, 1, 0)
+        ), np.uint8), 
+        np.array((0, 0, 1), np.uint8)
         ),
         (
+        np.array((
             (1, 0),
             (1, 1),
             (0, 1)
+        ), np.uint8), 
+        np.array((1, 0), np.uint8)
         )
-    ), np.uint8)
+    )
     
     dp = {
         "I": I,
@@ -120,7 +175,7 @@ class Puzzle:
     all = []
     for key in dp.keys():
         for each in dp[key]:
-            all.append(each)
+            all.append(each[0])
     all = tuple(all)
     
     def play(game, piece):
