@@ -4,6 +4,8 @@ from rotation_dict import rot_dic
 from Tetris import Tetris
 from config import *
 
+pyautogui.PAUSE = 0
+
 class TetrisBot:
     def __init__(self):
         self.screen_width, self.screen_height = pyautogui.size()
@@ -35,8 +37,9 @@ class TetrisBot:
 
     def start_game(self):
         self.click(self.new_game_x, self.new_game_y)
-        time.sleep(0.5)
+        time.sleep(1)
         self.click(accept_x,accept_y)
+        time.sleep(0.5)
         self.current_piece = self.get_pixel_color(self.first_piece_x, self.first_piece_y)
         self.next_piece = self.get_pixel_color(self.next_piece_x, self.next_piece_y)
         print(f"first piece type {self.color_to_piece[self.current_piece]}")
@@ -75,18 +78,14 @@ class TetrisBot:
         print(f"rotating {rot} times")
         for _ in range(rot):
             pyautogui.keyDown('up')
-            time.sleep(0.05)
 
         if 0 < move:
-            print(f"moving {abs(move)} left")
             for _ in range(abs(move)):
                 pyautogui.keyDown('left')
-                time.sleep(0.05)
         elif 0 > move:
-            print(f"moving {abs(move)} right")
             for _ in range(abs(move)):
-                pyautogui.keyDown('right')
-                time.sleep(0.05)
+                print("moving right")
+                pyautogui.press('right', presses=1)
         
         print("dropping")
         pyautogui.keyDown('space')
