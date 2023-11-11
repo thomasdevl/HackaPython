@@ -3,30 +3,25 @@ import numpy as np
 class Puzzle:
     I =(
         (
-            np.array((1, 1, 1, 1), np.uint8), 
+            np.array(((1, 1, 1, 1),), np.uint8), 
             np.array((0, 0, 0, 0), np.uint8)
         ),
         (
         np.array(
-            ((
-            1,
-            1,
-            1,
-            1
-            ))
+            ((1,), (1,), (1,), (1,))
         , np.uint8), 
         np.array((0,), np.uint8)
         )
     )
     
-    O = ((
+    O = [(
         np.array((
             (1, 1),
             (1, 1)
         ), np.uint8), 
         np.array((0, 0), np.uint8)
         )
-    )
+    ]
     
     T = (
         (
