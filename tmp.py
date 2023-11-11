@@ -7,7 +7,7 @@ class Tetris:
         self.height = height
         
         self.weight_height = 1
-        self.weight_hole = 1
+        self.weight_hole = 2
 
         self.board = np.zeros((self.height, self.width), dtype=np.int8)
         self.score = 0
@@ -15,25 +15,28 @@ class Tetris:
 
     def add_piece(self, piece: str):
         best_result = self.generate_max(piece)
-        # print("Best result:", best_result)
+        print("Best result:", best_result)
         self.place_piece(best_result[1], best_result[2][0], best_result[2][1])
 
     def check_position(self, limit: tuple, x: int, y: int) -> bool:
         # print("Limit:", limit)
         # print("Pos:", x, y)
         if y + 1 == self.height:
-            return False
+            return True
         
         for i in range(len(limit)):
             # print(x + i, y - limit[i] + 1):
-            if self.board[y - limit[i] + 1][x + i] == 1:
+            if self.board[y - limit[i]][x + i] == 1:
                 return False
             
         return True
         
     def place_dispo(self, dispo: tuple) -> tuple:
+        print("Dispo:", dispo)
+
         shape = dispo[0]
         limit = dispo[1]
+
         width = len(shape[0])
         height = len(shape)
 
@@ -44,15 +47,18 @@ class Tetris:
         for x in range(0, self.width - width):
             for y in range(0+height-1, self.height):
                 # print("x, y:", x, y)
+                if y - limit[index_constraint] != self.height - 1:
+                    if self.board[y - limit[index_constraint] + 1][x] == 0:
+                        # print("Continue")
+                        continue
 
-                if not self.check_position(limit, x, y):
+                if self.check_position(limit, x, y):
                     score = self.get_score(shape, limit, x, y)
                     
                     if best == None or score > best[0]:
                         best = (score, dispo, (x, y))
                         # print("Best:", best)
-                    
-                    break
+                break
                 
         return best             
                 
@@ -64,6 +70,7 @@ class Tetris:
         result = (-np.inf, None, None)
         
         for dispo in dispositions:
+            print("Dispo:", dispo)
             tmp = self.place_dispo(dispo)
             # print("Tmp:", tmp)
             # print("Result:", result)
@@ -75,17 +82,12 @@ class Tetris:
     def get_score(self, shape: tuple, limit: tuple, x: int, y: int) -> int:
         nholes = 0
         ncases_beyond = y
-        nContacts = 0
     
         width = len(shape)
         height = len(shape[0])
 
         for k in range(len(limit)):
             j = x + k
-            
-            yp = y - limit[k] + 1
-            if yp == self.height or self.board[yp][x + k]:
-                nContacts += 1
             
             for i in range(y - limit[k] + 1, self.height):
                 if self.board[i][j] == 0:
@@ -94,7 +96,7 @@ class Tetris:
         ncases_beyond *= self.weight_height
         nholes *= self.weight_hole
                     
-        return ncases_beyond - nholes + nContacts
+        return ncases_beyond - nholes
 
     def place_piece(self, position: tuple, x: int, y: int):
         # position = (dis, (x, y))
@@ -102,16 +104,12 @@ class Tetris:
         height = len(shape)
         width = len(shape[0])
 
-        # print("Placed piece: \n", shape)
-        # print("Placed at:", x, y)
-
-        for i in range(height-1, -1, -1):
-            for j in range(width-1, -1, -1):
+        for i in range(height):
+            for j in range(width):
                 if shape[i][j] != 1:
                     continue
 
-                self.board[y + i - height + 1][x + j] = 1
-                
+                self.board[y-j][x-i] = 1
                 if np.sum(self.board[y-j]) == self.width:
                     self.update_line(x+width-i)
                         
@@ -123,33 +121,6 @@ class Tetris:
     def print_board(self):
         print(self.board)
         
-# if __name__ == "__main__":        
-#     t = Tetris(4, 4)
-    
-#     t.board = [
-#         [0, 0, 0, 0],
-#         [1, 0, 0, 0],
-#         [1, 0, 1, 0],
-#         [1, 1, 1, 0]
-#     ]
-    
-#     print(t.get_score(
-#         [[1, 0],
-#          [1, 1],
-#          [1, 0]],
-#         [0, 1],
-#         1, 2
-#     ))
-    
-#     print(t.get_score(
-#         [[1, 0, 0],
-#          [1, 1, 1]],
-#         [0, 0, 0],
-#         1, 1
-#     ))
-    
-#     print(t.get_score(
-#         [[1, 1, 1, 1]],
-#         [0, 0, 0, 0],
-#         0, 0
-#     ))
+if __name__ == "__main__":        
+    t = Tetris()
+    print(t.board)
