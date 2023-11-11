@@ -42,8 +42,8 @@ class Tetris:
 
         best = None
         
-        for x in range(0, self.width - width):
-            for y in range(0+height-1, self.height):
+        for x in range(0, self.width - width+1):
+            for y in range(height-1, self.height):
                 # print("x, y:", x, y)
 
                 if not self.check_position(limit, x, y):
@@ -76,17 +76,33 @@ class Tetris:
     def get_score(self, shape: tuple, limit: tuple, x: int, y: int) -> int:
         nholes = 0
         ncases_beyond = y
-        nContacts = 0
+        nContactsSol = 0
+        nContactsCote = 0
     
-        width = len(shape)
-        height = len(shape[0])
+        width = len(shape[0])
+        height = len(shape)
+
+        # print("Shape: \n", shape)
+
+        for i in range(0, height):
+            if x == 0:
+                if shape[i][0] == 1:
+                    nContactsCote += 1
+            elif x + width == self.width:
+                if shape[i][-1] == 1:
+                    nContactsCote += 1
+            else:
+                if shape[i][0] == 1 and self.board[y - height + i + 1][x - 1] == 1:
+                    nContactsCote += 1
+                if shape[i][-1] == 1 and self.board[y - height + i + 1][x + width] == 1:
+                    nContactsCote += 1 
 
         for k in range(len(limit)):
             j = x + k
             
             yp = y - limit[k] + 1
             if yp == self.height or self.board[yp][x + k]:
-                nContacts += 1
+                nContactsSol += 1
             
             for i in range(y - limit[k] + 1, self.height):
                 if self.board[i][j] == 0:
@@ -95,7 +111,7 @@ class Tetris:
         ncases_beyond *= self.weight_height
         nholes *= self.weight_hole
                     
-        return ncases_beyond - nholes + nContacts
+        return ncases_beyond - nholes + nContactsSol + nContactsCote
 
     def place_piece(self, position: tuple, x: int, y: int):
         # position = (dis, (x, y))
@@ -103,18 +119,28 @@ class Tetris:
         height = len(shape)
         width = len(shape[0])
 
+        update_line = np.zeros(height, dtype=np.int8)
+
         # print("Placed piece: \n", shape)
         # print("Placed at:", x, y)
+        # test = 0
 
         for i in range(height-1, -1, -1):
             for j in range(width-1, -1, -1):
+                # test += 1
                 if shape[i][j] != 1:
                     continue
-
-                self.board[y + i - height + 1][x + j] = 1
+                # print(test)
+                self.board[y + i - height + 1][x + j] += 1
+                # print("Placed at:", x + j, y + i - height + 1)
+                # print("Sum of line:", y + i - height + 1, np.sum(self.board[y-j]))
                 
-                if np.sum(self.board[y-j]) == self.width:
-                    self.update_line(x+width-i)
+                if np.sum(self.board[y + i - height + 1]) == self.width:
+                    # print("Line completed!")
+                    # self.print_board()
+                    update_line[i] = y + i - height + 1
+        for i in range(height):  
+            self.update_line(update_line[i])
                         
     def update_line(self, line: int):
         for i in range(line, 0, -1):
@@ -122,7 +148,18 @@ class Tetris:
         self.board[0] = np.zeros((1, self.width), dtype=np.int8)
 
     def print_board(self):
-        print(self.board)
+        for i in range(self.height):
+            print(i, end="\t")
+            for j in range(self.width):
+                if self.board[i][j] == 0:
+                    print(" ", end="")
+                else:
+                    print(self.board[i][j], end="")
+            print()
+        print("\t", end="")
+        for _ in range(self.width):
+            print(".", end="")
+        print()
         
 # if __name__ == "__main__":        
 #     t = Tetris(4, 4)
