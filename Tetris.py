@@ -17,6 +17,7 @@ class Tetris:
         best_result = self.generate_max(piece)
         # print("Best result:", best_result)
         self.place_piece(best_result[1], best_result[2][0], best_result[2][1])
+        return (best_result[2],[arr.tolist() for arr in best_result[1][0]])
 
     def check_position(self, limit: tuple, x: int, y: int) -> bool:
         # print("Limit:", limit)

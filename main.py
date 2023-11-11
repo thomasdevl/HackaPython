@@ -2,6 +2,7 @@ import pyautogui
 import numpy as np
 import time
 from rotation_dict import rot_dic
+from Tetris import Tetris
 
 class TetrisBot:
     def __init__(self):
@@ -19,7 +20,7 @@ class TetrisBot:
                                 (101, 193, 94): 'L'}
         self.current_piece = None
         self.next_piece = None
-        self.gameboard = np.zeros((22, 12), dtype=int)
+        self.Tetris = Tetris()
 
     def get_pixel_color(self, x, y):
         if 0 <= x < self.screen_width and 0 <= y < self.screen_height:
@@ -48,55 +49,47 @@ class TetrisBot:
 
     def play(self):
         # caclulate the best move
-        # TODO
-        # => output : (bottom left cord, matrix of the piece)
+        data = self.Tetris.add_piece(self.color_to_piece[self.current_piece])
         
         # execute the best move
-        # data_test form ==> (matrix of the piece, bottom left cord, nb_rot, nb_right)
-        data =  ((20,4),
-                [[1,1],
-                 [1,0],
-                 [1,0]],
-                3)
-
         move = self.calculate_moves(data)
-
-        self.move_piece(move, data[2])
-
-        # update the gameboard 
-        # TODO
+        rot = rot_dic[str(data[1]).replace(" ", "")][1]
+        self.move_piece(move, rot)
 
         # update the current and next piece
+        time.sleep(1)
         self.current_piece = self.next_piece
         self.next_piece = self.get_pixel_color(self.next_piece_x, self.next_piece_y)
+        self.play()
 
         
     def calculate_moves(self, data):
         lst_str = str(data[1]).replace(" ", "")
-        print(rot_dic[lst_str])
-        return 5 + (rot_dic[lst_str]) - data[0][1]
+        decalage = rot_dic[lst_str][0]
+        return 5 + decalage - data[0][0]
     
     def move_piece(self, move, rot):
+        print(self.color_to_piece[self.current_piece])
         if 0 < move:
-            print(f"moving {move} left")
-            for _ in range(move):
-                pass
+            print(f"moving {abs(move)} left")
+            for _ in range(abs(move)):
                 pyautogui.keyDown('left')
                 time.sleep(0.05)
         elif 0 > move:
             print(f"moving {abs(move)} right")
             for _ in range(abs(move)):
-                pass
                 pyautogui.keyDown('right')
                 time.sleep(0.05)
 
         print(f"rotating {rot} times")
         for _ in range(rot):
-            pass
             pyautogui.keyDown('up')
             time.sleep(0.05)
 
+        print("dropping")
         pyautogui.keyDown('space')
+
+        print(self.Tetris.print_board())
 
         
 
@@ -107,4 +100,4 @@ if __name__ == '__main__':
     bot = TetrisBot()
     bot.start_game()
 
-    #bot.play()
+    bot.play()
