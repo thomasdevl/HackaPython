@@ -3,7 +3,7 @@ import puzzles as pz
 import copy as cp
 
 class Tetris:
-    def __init__(self, width=12, height=20, weight_y=2, weight_hole=4, weight_contact=1, weight_burn=2):
+    def __init__(self, width=12, height=20, weight_y=2, weight_hole=4, weight_contact=1, weight_burn=6):
         self.width = width
         self.height = height
 

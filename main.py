@@ -78,7 +78,17 @@ class TetrisBot:
         self.wait_for_pixel_change(self.first_piece_x, self.first_piece_y, self.yellow, 1)
         self.current_piece = self.next_piece
         self.next_piece = self.get_pixel_color(self.next_piece_x, self.next_piece_y)
+
+        if self.get_pixel_color(game_over_x, game_over_y) == game_over_color:
+            print("Game over")
+            pyautogui.write("HqckqPython")
+            pyautogui.press('enter')
+            time.sleep(1)
+            return
+        
         self.play()
+
+
 
         
     def calculate_moves(self, data):
@@ -115,7 +125,8 @@ if __name__ == '__main__':
 
     time.sleep(2)
     
-    bot = TetrisBot()
-    bot.start_game()
+    for _ in range (5):
+        bot = TetrisBot()
+        bot.start_game()
 
-    bot.play()
+        bot.play()
