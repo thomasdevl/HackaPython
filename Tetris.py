@@ -3,7 +3,7 @@ import puzzles as pz
 import copy as cp
 
 class Tetris:
-    def __init__(self, width=12, height=20, weight_y=1, weight_hole=2, weight_contact=1.5, weight_next=0.5):
+    def __init__(self, width=12, height=20, weight_y=1, weight_hole=2.5, weight_contact=1.5, weight_next=0.5):
         self.width = width
         self.height = height
         
@@ -172,7 +172,6 @@ class Tetris:
                 self.board[y + i - height + 1][x + j] += 1
                 if np.sum(self.board[y + i - height + 1]) == self.width:
                     update_line[i] = y + i - height + 1
-
         for i in range(height):  
             self.update_line(update_line[i])
                         
@@ -183,7 +182,7 @@ class Tetris:
         """
         for i in range(line, 0, -1):
             self.board[i] = self.board[i - 1]
-            
+
         self.board[0] = np.zeros((1, self.width), dtype=np.int8)
 
     def print_board(self):
