@@ -94,7 +94,7 @@ class Tetris:
         best = None
 
         xWidth = self.width - width
-        if self.burn_mode or dispo[1] == self.burner:
+        if self.burn_mode or dispo[0] == self.burner:
             xWidth = self.width - width +1
         
         for x in range(0, xWidth):
