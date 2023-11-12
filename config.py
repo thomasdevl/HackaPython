@@ -12,6 +12,10 @@ next_piece_x, next_piece_y = 668, 579
 # Value of the accept panel 
 accept_x, accept_y = 920,216
 
+# Value of the game over panel
+game_over_x, game_over_y = 665, 279
+game_over_color = (41, 42, 45)
+
 # Color of your screen 
 Z_1 = (243, 176, 68)
 Z_2 = (237, 112, 45)

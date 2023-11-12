@@ -24,6 +24,8 @@ class TetrisBot:
         self.next_piece = None
         self.Tetris = Tetris()
         self.yellow = Bg_Yellow
+        self.game_over_coord = (game_over_x, game_over_y)
+        self.game_over_color = game_over_color
 
     def get_pixel_color(self, x, y):
         if 0 <= x < self.screen_width and 0 <= y < self.screen_height:
@@ -79,6 +81,14 @@ class TetrisBot:
         self.wait_for_pixel_change(self.first_piece_x, self.first_piece_y, self.yellow, 1)
         self.current_piece = self.next_piece
         self.next_piece = self.get_pixel_color(self.next_piece_x, self.next_piece_y)
+
+        print(self.get_pixel_color(game_over_x, game_over_y))
+        if self.get_pixel_color(game_over_x, game_over_y) == game_over_color:
+            print("Game over")
+            pyautogui.write("HqckqPython")
+            pyautogui.press('enter')
+            time.sleep(1)
+            return
         self.play()
 
         
@@ -114,7 +124,7 @@ if __name__ == '__main__':
 
     time.sleep(2)
     
-    bot = TetrisBot()
-    bot.start_game()
-
-    bot.play()
+    for _ in range (5):
+        bot = TetrisBot()
+        bot.start_game()
+        bot.play()
