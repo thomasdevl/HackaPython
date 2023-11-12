@@ -141,7 +141,7 @@ class Tetris:
         result = 0
 
         if self.next_piece != None:
-            test = cp.copy(self)
+            test = self.copy()
             test.place_piece(dispo, x, y)
             result = test.generate_max(self.next_piece)[0]
                     
@@ -199,6 +199,11 @@ class Tetris:
         for _ in range(self.width):
             print(".", end="")
         print()
+
+    def copy(self):
+        result = Tetris(self.width, self.height, self.weight_y, self.weight_hole, self.weight_contact, self.weight_next)
+        result.board = cp.copy(self.board)
+        return result
         
 # if __name__ == "__main__":        
 #     t = Tetris(4, 4)
