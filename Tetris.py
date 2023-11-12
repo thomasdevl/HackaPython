@@ -2,7 +2,7 @@ import numpy as np
 import puzzles as pz
 
 class Tetris:
-    def __init__(self, width=12, height=20, weight_y=1, weight_hole=2, weight_contact=1.5):
+    def __init__(self, width=12, height=20, weight_y=1, weight_hole=2.5, weight_contact=1.5):
         self.width = width
         self.height = height
         
