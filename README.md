@@ -1,8 +1,9 @@
-HackPython - Tetis Bot
+HackPython - Tetris Bot
 
 ## Description
 
 This is a bot for the game Tetris.
+It only runs on this website : https://web.itu.edu.tr/~msilgu/tetris/tetris.html 
 
 ## Installation
 
