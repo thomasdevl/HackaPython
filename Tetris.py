@@ -80,7 +80,7 @@ class Tetris:
                     
         return self.weight_y * y \
             - self.weight_hole * nholes \
-                + self.weight_contact * ncontacts + result_next
+                + self.weight_contact * ncontacts + result_next * 0.5
 
         
     def place_dispo(self, dispo: tuple) -> tuple:

@@ -69,7 +69,7 @@ class TetrisBot:
 
     def play(self):
         # caclulate the best move
-        data = self.Tetris.add_piece(self.color_to_piece[self.current_piece])
+        data = self.Tetris.add_piece(self.color_to_piece[self.current_piece], self.color_to_piece[self.next_piece])
  
         # execute the best move
         move = self.calculate_moves(data)
@@ -82,7 +82,6 @@ class TetrisBot:
         self.current_piece = self.next_piece
         self.next_piece = self.get_pixel_color(self.next_piece_x, self.next_piece_y)
 
-        print(self.get_pixel_color(game_over_x, game_over_y))
         if self.get_pixel_color(game_over_x, game_over_y) == game_over_color:
             print("Game over")
             pyautogui.write("HqckqPython")
