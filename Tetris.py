@@ -92,10 +92,14 @@ class Tetris:
         width = len(shape[0])
         height = len(shape)
         best = None
+        burner = shape == self.burner    
 
         xWidth = self.width - width
-        if self.burn_mode or dispo[0] == self.burner:
-            xWidth = self.width - width +1
+
+        if self.burn_mode or np.all(burner):
+            if width == 1:
+                xWidth = self.width - width + 1
+            
         
         for x in range(0, xWidth):
             for y in range(height-1, self.height):

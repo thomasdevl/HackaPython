@@ -25,7 +25,7 @@ Test1 = t.Tetris()
 # Test1.print_board()
 # Test1.add_piece("I")
 
-for i in range(12):
+for i in range(22):
     Test1.add_piece("I")
     Test1.print_board()
 
@@ -36,4 +36,4 @@ for i in range(12):
 
 # print(p.T[0])
 
-Test1.print_board()
+# Test1.print_board()
