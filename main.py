@@ -12,17 +12,18 @@ class TetrisBot:
         self.new_game_x, self.new_game_y = new_game_x, new_game_y
         self.first_piece_x, self.first_piece_y = first_piece_x, first_piece_y
         self.next_piece_x, self.next_piece_y = next_piece_x, next_piece_y
-        self.color_to_piece = { (243, 176, 68): 'Z',
-                                (237, 112, 45): 'Z',
-                                (86, 162, 243): 'J',
-                                (190, 91, 191): 'T',
-                                (153, 153, 153): 'O',
-                                (234, 51, 35) : 'I',
-                                (243, 176, 68): 'S',
-                                (101, 193, 94): 'L'}
+        self.color_to_piece = { Z_1: 'Z',
+                                Z_2: 'Z',
+                                J: 'J',
+                                T: 'T',
+                                O: 'O',
+                                I : 'I',
+                                S: 'S',
+                                L: 'L'}
         self.current_piece = None
         self.next_piece = None
         self.Tetris = Tetris()
+        self.yellow = Bg_Yellow
 
     def get_pixel_color(self, x, y):
         if 0 <= x < self.screen_width and 0 <= y < self.screen_height:
@@ -49,6 +50,20 @@ class TetrisBot:
             print("bad start")
             self.start_game()
 
+    def wait_for_pixel_change(self, x, y, target_color, timeout):
+        start_time = time.time()
+
+        while time.time() - start_time < timeout:
+            current_color = self.get_pixel_color(x, y)
+            if current_color != target_color:
+                return True  
+
+            time.sleep(0.05)  
+
+        # Timeout
+        return False  
+
+
 
     def play(self):
         # caclulate the best move
@@ -61,7 +76,7 @@ class TetrisBot:
         self.move_piece(move, rot)
 
         # update the current and next piece
-        time.sleep(1)
+        self.wait_for_pixel_change(self.first_piece_x, self.first_piece_y, self.yellow, 1)
         self.current_piece = self.next_piece
         self.next_piece = self.get_pixel_color(self.next_piece_x, self.next_piece_y)
         self.play()
@@ -81,7 +96,8 @@ class TetrisBot:
 
         if 0 < move:
             for _ in range(abs(move)):
-                pyautogui.keyDown('left')
+                print("moving left")
+                pyautogui.press('left', presses=1)
         elif 0 > move:
             for _ in range(abs(move)):
                 print("moving right")
