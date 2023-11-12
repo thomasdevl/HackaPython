@@ -1,5 +1,6 @@
 import numpy as np
 import puzzles as pz
+import copy as cp
 
 class Tetris:
     def __init__(self, width=12, height=20, weight_y=1, weight_hole=2, weight_contact=1):
@@ -10,15 +11,18 @@ class Tetris:
         self.weight_hole = weight_hole
         self.weight_contact = weight_contact
 
+        self.next_piece = None
+
         self.board = np.zeros((self.height, self.width), dtype=np.int8)
         self.score = 0
         self.puzzle = pz.Puzzle()
 
-    def add_piece(self, piece: str):
+    def add_piece(self, piece: str, next_piece: str):
         """
         pre: the argument piece here is a character identificator of the piece
         post: place the piece in the board as best as possible
         """
+        self.next_piece = next_piece
         best_result = self.generate_max(piece)
         
         if best_result != None:
@@ -65,10 +69,19 @@ class Tetris:
             for i in range(y - limit[k] + 1, self.height):
                 if self.board[i][j] == 0:
                     nholes += 1
+        
+        result_next = 0
+
+        if self.next_piece != None:
+            test = cp.deepcopy(self)
+            test.place_piece(shape, x, y)
+            result_next = test.generate_max(self.next_piece)[0]
+
                     
         return self.weight_y * y \
             - self.weight_hole * nholes \
-                + self.weight_contact * ncontacts
+                + self.weight_contact * ncontacts + result_next
+
         
     def place_dispo(self, dispo: tuple) -> tuple:
         """
