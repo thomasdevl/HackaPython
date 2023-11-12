@@ -69,7 +69,11 @@ class TetrisBot:
 
     def play(self):
         # caclulate the best move
-        data = self.Tetris.add_piece(self.color_to_piece[self.current_piece])
+        try:
+            data = self.Tetris.add_piece(self.color_to_piece[self.current_piece])
+        except KeyError:
+            self.game_over()
+            return
  
         # execute the best move
         move = self.calculate_moves(data)
@@ -84,12 +88,18 @@ class TetrisBot:
 
         print(self.get_pixel_color(game_over_x, game_over_y))
         if self.get_pixel_color(game_over_x, game_over_y) == game_over_color:
-            print("Game over")
-            pyautogui.write("HqckqPython")
-            pyautogui.press('enter')
-            time.sleep(1)
+            self.game_over()
             return
         self.play()
+
+    def game_over(self):
+        time.sleep(1)
+        print("Game over")
+        real_time = str(time.strftime("%H:%M:%S", time.localtime()))
+        pyautogui.write(f"HqckqPython ")
+        pyautogui.press('enter')
+        time.sleep(1)
+        return
 
         
     def calculate_moves(self, data):
@@ -116,7 +126,6 @@ class TetrisBot:
         print("dropping")
         pyautogui.keyDown('space')
 
-        print(self.Tetris.print_board())
 
         
 

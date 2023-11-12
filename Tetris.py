@@ -2,7 +2,7 @@ import numpy as np
 import puzzles as pz
 
 class Tetris:
-    def __init__(self, width=12, height=20, weight_y=1, weight_hole=2, weight_contact=1):
+    def __init__(self, width=12, height=20, weight_y=1, weight_hole=2, weight_contact=1.5):
         self.width = width
         self.height = height
         
@@ -42,33 +42,6 @@ class Tetris:
                 return False
             
         return True
-        
-    def get_score(self, shape: tuple, limit: tuple, x: int, y: int) -> int:
-        """
-        pre: shape is a description matrix of a piece, limit is a tuple that contains the limits of the piece
-        and (x, y) are the coordinates of the piece
-        post: returns the score of the placed piece
-        """
-        nholes = 0
-        ncontacts = 0
-    
-        width = len(shape)
-        height = len(shape[0])
-
-        for k in range(len(limit)):
-            j = x + k
-            
-            yp = y - limit[k] + 1
-            if yp == self.height or self.board[yp][x + k]:
-                ncontacts += 1
-            
-            for i in range(y - limit[k] + 1, self.height):
-                if self.board[i][j] == 0:
-                    nholes += 1
-                    
-        return self.weight_y * y \
-            - self.weight_hole * nholes \
-                + self.weight_contact * ncontacts
         
     def place_dispo(self, dispo: tuple) -> tuple:
         """
@@ -127,25 +100,26 @@ class Tetris:
         nholes = 0
         ncases_beyond = y
         nContactsSol = 0
-        nContactsCote = 0
+        nContactsPillars = 0
     
         width = len(shape[0])
         height = len(shape)
 
         # print("Shape: \n", shape)
 
-        # for i in range(0, height):
-        #     if x == 0:
-        #         if shape[i][0] == 1:
-        #             nContactsCote += 1
-        #     elif x + width == self.width:
-        #         if shape[i][-1] == 1:
-        #             nContactsCote += 1
-        #     else:
-        #         if shape[i][0] == 1 and self.board[y - height + i + 1][x - 1] == 1:
-        #             nContactsCote += 1
-        #         if shape[i][-1] == 1 and self.board[y - height + i + 1][x + width] == 1:
-        #             nContactsCote += 1 
+        for i in range(0, height):
+            if x >= 2:
+                if shape[i][0] == 1 and self.board[y - height + i + 1][x - 1] == 0 and self.board[y - height + i + 1][x - 2] == 1:
+                    nContactsPillars += 1
+            elif x == 1:
+                if shape[i][0] == 1 and self.board[y - height + i + 1][x - 1] == 0:
+                    nContactsPillars += 1
+            elif x <= self.width - 3:
+                if shape[i][width - 1] == 1 and self.board[y - height + i + 1][x + width] == 0 and self.board[y - height + i + 1][x + width + 1] == 1:
+                    nContactsPillars += 1
+            elif x == self.width - 2:
+                if shape[i][width - 1] == 1 and self.board[y - height + i + 1][x + width] == 0:
+                    nContactsPillars += 1
 
         for k in range(len(limit)):
             j = x + k
@@ -160,8 +134,9 @@ class Tetris:
                     
         ncases_beyond *= self.weight_y
         nholes *= self.weight_hole
+        nContactsPillars *= self.weight_contact
                     
-        return ncases_beyond - nholes + nContactsSol + nContactsCote
+        return ncases_beyond - nholes + nContactsSol - nContactsPillars
 
     def place_piece(self, position: tuple, x: int, y: int):
         # position = (dis, (x, y))
