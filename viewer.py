@@ -8,14 +8,14 @@ t = Tetris.Tetris()
 pieces = list(t.puzzle.dp.keys())
 print(pieces)
 
-def print_board(t: Tetris.Tetris, piece: str):
+def print_board(t: Tetris.Tetris, piece: str, next_piece: str):
     copy = np.zeros((t.height, t.width), np.uint8)
     
     for i in range(t.height):
         for j in range(t.width):
             copy[i][j] = t.board[i][j]
             
-    value = t.add_piece(piece)
+    value = t.add_piece(piece, next_piece)
     
     for i in range(t.height):
         print("{", end="")
@@ -45,10 +45,14 @@ def isValid(matrix):
                 return False
     return True
 
+current = pieces[randint(0, len(pieces) - 1)]
+next = pieces[randint(0, len(pieces) - 1)]
 while isValid(t.board):
-    print_board(t, pieces[randint(0, len(pieces) - 1)])
+    print_board(t, current, next)
+    current = next
+    next = pieces[randint(0, len(pieces) - 1)]
     print("Score : ", t.score)
-    sleep(0.001)
+    # sleep(0.001)
     i += 1
     
 print("Loops count ==> ", i)

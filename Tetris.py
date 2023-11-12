@@ -14,12 +14,12 @@ class Tetris:
         self.score = 0
         self.puzzle = pz.Puzzle()
 
-    def add_piece(self, piece: str):
+    def add_piece(self, piece: str, next_piece=None):
         """
         pre: the argument piece here is a character identificator of the piece
         post: place the piece in the board as best as possible
         """
-        best_result = self.generate_max(piece)
+        best_result = self.generate_max(piece, next_piece)
         
         if best_result != None:
             self.place_piece(best_result[1], best_result[2][0], best_result[2][1])
@@ -76,7 +76,7 @@ class Tetris:
         return best             
                 
 
-    def generate_max(self, piece: str) -> tuple:
+    def generate_max(self, piece: str, next_piece: str) -> tuple:
         """
         pre: the argument piece here is a character identificator of the piece
         post:
@@ -86,15 +86,24 @@ class Tetris:
         """
         dispositions = self.puzzle.dp.get(piece)
         
-        result = None
+        result = (None, None)
+        next_result = (0, None, None)
         
         for dispo in dispositions:
             tmp = self.place_dispo(dispo)
+            
+            if next_piece != None:
+                self.copy = np.copy(self.board)
+                self.place_piece(tmp[1], tmp[2][0], tmp[2][1])
+                next_tmp = self.generate_max(next_piece, None)
+                self.board = self.copy
+            else:
+                next_tmp = (0,)
 
-            if result == None or result[0] < tmp[0]:
-                result = tmp
+            if result[0] == None or result[0][0] + result[1][0] < tmp[0] + next_tmp[0]:
+                result = (tmp, next_tmp)
                 
-        return result
+        return result[0]
     
     def get_score(self, shape: tuple, limit: tuple, x: int, y: int) -> int:
         nholes = 0
@@ -123,8 +132,8 @@ class Tetris:
 
         for k in range(len(limit)):
             j = x + k
-            
             yp = y - limit[k] + 1
+            
             if yp == self.height or self.board[yp][x + k]:
                 nContactsSol += 1
             
