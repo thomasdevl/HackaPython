@@ -2,7 +2,7 @@ import numpy as np
 import puzzles as pz
 
 class Tetris:
-    def __init__(self, width=12, height=20, weight_y=1, weight_hole=2, weight_contact=1):
+    def __init__(self, width=12, height=20, weight_y=1, weight_hole=4, weight_contact=1):
         self.width = width
         self.height = height
         
@@ -13,6 +13,13 @@ class Tetris:
         self.board = np.zeros((self.height, self.width), dtype=np.int8)
         self.score = 0
         self.puzzle = pz.Puzzle()
+
+        self.tetris_mode = True
+        self.burn_mode = False
+
+        self.burned_lines = 0
+        
+        self.burner = np.array(((1,), (1,), (1,), (1,)), np.uint8)
 
     def add_piece(self, piece: str):
         """
@@ -85,8 +92,12 @@ class Tetris:
         width = len(shape[0])
         height = len(shape)
         best = None
+
+        xWidth = self.width - width
+        if self.burn_mode or dispo[1] == self.burner:
+            xWidth = self.width - width +1
         
-        for x in range(0, self.width - width+1):
+        for x in range(0, xWidth):
             for y in range(height-1, self.height):
                 # print("x, y:", x, y)
 
@@ -182,6 +193,10 @@ class Tetris:
                     continue
                 
                 self.board[y + i - height + 1][x + j] += 1
+                if x + i - height +1 >= 11:
+                    self.burn_mode = True
+                    self.tetris_mode = False
+                    self.weight_hole = 2
                 if np.sum(self.board[y + i - height + 1]) == self.width:
                     update_line[i] = y + i - height + 1
 
@@ -193,10 +208,18 @@ class Tetris:
         pre: line an array line of the board to update
         post: update the targeted lines according the rules of the game
         """
+        if self.burned_lines >= 4:
+            self.burned_lines = 0
+            self.burn_mode = False
+            self.tetris_mode = True
+            self.weight_hole = 4
+
         for i in range(line, 0, -1):
             self.board[i] = self.board[i - 1]
             
         self.board[0] = np.zeros((1, self.width), dtype=np.int8)
+        if self.burn_mode:
+            self.burned_lines += 1
 
     def print_board(self):
         for i in range(self.height):
