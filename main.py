@@ -66,7 +66,7 @@ class TetrisBot:
 
     def play(self):
         # caclulate the best move
-        data = self.Tetris.add_piece(self.color_to_piece[self.current_piece])
+        data = self.Tetris.add_piece(self.color_to_piece[self.current_piece], self.color_to_piece[self.next_piece])
  
         # execute the best move
         move = self.calculate_moves(data)

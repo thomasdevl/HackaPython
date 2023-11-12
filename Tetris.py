@@ -6,6 +6,8 @@ class Tetris:
     def __init__(self, width=12, height=20, weight_y=2, weight_hole=4, weight_contact=1, weight_burn=2):
         self.width = width
         self.height = height
+
+        self.next_piece = None
         
         self.weight_y = weight_y
         self.weight_hole = weight_hole
@@ -23,15 +25,19 @@ class Tetris:
         
         self.burner = np.array(((1,), (1,), (1,), (1,)), np.uint8)
 
-    def add_piece(self, piece: str):
+    def add_piece(self, piece: str, next_piece: str):
         """
         pre: the argument piece here is a character identificator of the piece
         post: place the piece in the board as best as possible
         """
+        self.next_piece = next_piece
         best_result = self.generate_max(piece)
+    
         
         if best_result != None:
             self.place_piece(best_result[1], best_result[2][0], best_result[2][1], True)
+
+        # print("Best score:", best_result[0])
 
         return (best_result[2],[arr.tolist() for arr in best_result[1][0]])
 
@@ -52,32 +58,6 @@ class Tetris:
             
         return True
         
-    # def get_score(self, shape: tuple, limit: tuple, x: int, y: int) -> int:
-    #     """
-    #     pre: shape is a description matrix of a piece, limit is a tuple that contains the limits of the piece
-    #     and (x, y) are the coordinates of the piece
-    #     post: returns the score of the placed piece
-    #     """
-    #     nholes = 0
-    #     ncontacts = 0
-    
-    #     width = len(shape)
-    #     height = len(shape[0])
-
-    #     for k in range(len(limit)):
-    #         j = x + k
-            
-    #         yp = y - limit[k] + 1
-    #         if yp == self.height or self.board[yp][x + k]:
-    #             ncontacts += 1
-            
-    #         for i in range(y - limit[k] + 1, self.height):
-    #             if self.board[i][j] == 0:
-    #                 nholes += 1
-                    
-    #     return self.weight_y * y \
-    #         - self.weight_hole * nholes \
-    #             + self.weight_contact * ncontacts
         
     def place_dispo(self, dispo: tuple) -> tuple:
         """
@@ -142,23 +122,6 @@ class Tetris:
         nholes = 0
         ncases_beyond = y - max(limit)
         nContactsSol = 0
-        nContactsCote = 0
-
-
-        # print("Shape: \n", shape)
-
-        # for i in range(0, height):
-        #     if x == 0:
-        #         if shape[i][0] == 1:
-        #             nContactsCote += 1
-        #     elif x + width == self.width:
-        #         if shape[i][-1] == 1:
-        #             nContactsCote += 1
-        #     else:
-        #         if shape[i][0] == 1 and self.board[y - height + i + 1][x - 1] == 1:
-        #             nContactsCote += 1
-        #         if shape[i][-1] == 1 and self.board[y - height + i + 1][x + width] == 1:
-        #             nContactsCote += 1 
 
         for k in range(len(limit)):
             j = x + k
@@ -173,6 +136,14 @@ class Tetris:
         
         nb_updated_lines = self.place_piece(dispo, x, y, False)
 
+        resultNext = 0
+
+        if self.next_piece != None:
+            test_next = cp.deepcopy(self)
+            test_next.place_piece(dispo, x, y, True)
+            test_next.next_piece = None
+            resultNext = test_next.generate_max(self.next_piece)[0]
+
         # if y >= 11:
         #     ncases_beyond *= 3
                     
@@ -180,7 +151,7 @@ class Tetris:
         nholes *= self.weight_hole
         nb_updated_lines += self.weight_burn * nb_updated_lines**2
                     
-        return ncases_beyond - nholes + nContactsSol + nContactsCote + nb_updated_lines
+        return ncases_beyond - nholes + nContactsSol + nb_updated_lines + resultNext * 0.5
 
 
     def place_piece(self, position: tuple, x: int, y: int, update=False):
@@ -191,10 +162,6 @@ class Tetris:
         width = len(shape[0])
 
         update_line = np.zeros(height, dtype=np.int8)
-
-        # print("Placed piece: \n", shape)
-        # print("Placed at:", x, y)
-        # test = 0
 
         for i in range(height-1, -1, -1):
             for j in range(width-1, -1, -1):
