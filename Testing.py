@@ -26,7 +26,7 @@ Test1 = t.Tetris()
 # Test1.add_piece("I")
 
 for i in range(12):
-    Test1.add_piece("I")
+    Test1.add_piece("I", "I")
     Test1.print_board()
 
 # p = pz.Puzzle()
