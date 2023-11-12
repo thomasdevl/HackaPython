@@ -4,7 +4,7 @@ from rotation_dict import rot_dic
 from Tetris import Tetris
 from config import *
 
-pyautogui.PAUSE = 0
+pyautogui.PAUSE = 0.01
 
 class TetrisBot:
     def __init__(self):
@@ -91,14 +91,17 @@ class TetrisBot:
 
         print(f"rotating {rot} times")
         for _ in range(rot):
-            pyautogui.keyDown('up')
+            print("rotate")
+            pyautogui.press('up', presses=1)
 
         if 0 < move:
+            print(f"moving {move}left")
             for _ in range(abs(move)):
-                pyautogui.keyDown('left')
+                pyautogui.press('left', presses=1)
+                
         elif 0 > move:
+            print(f"moving {move} right")
             for _ in range(abs(move)):
-                print("moving right")
                 pyautogui.press('right', presses=1)
         
         print("dropping")
