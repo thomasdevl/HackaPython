@@ -3,6 +3,7 @@ import time
 from rotation_dict import rot_dic
 from Tetris import Tetris
 from config import *
+from pynput.keyboard import Key, Controller
 
 pyautogui.PAUSE = 0
 
@@ -26,6 +27,7 @@ class TetrisBot:
         self.yellow = Bg_Yellow
         self.game_over_coord = (game_over_x, game_over_y)
         self.game_over_color = game_over_color
+        self.kb = Controller()
 
     def get_pixel_color(self, x, y):
         if 0 <= x < self.screen_width and 0 <= y < self.screen_height:
@@ -59,8 +61,7 @@ class TetrisBot:
             current_color = self.get_pixel_color(x, y)
             if current_color != target_color:
                 return True  
-
-            time.sleep(0.05)  
+            time.sleep(0.05)
 
         # Timeout
         return False  
@@ -68,7 +69,7 @@ class TetrisBot:
 
 
     def play(self):
-        # caclulate the best move
+        # calculate the best move
         try:
             # start_time = time.time()
             data = self.Tetris.add_piece(self.color_to_piece[self.current_piece], self.color_to_piece[self.next_piece])
@@ -114,19 +115,23 @@ class TetrisBot:
         #print(self.color_to_piece[self.current_piece])
 
         for _ in range(rot):
-            pyautogui.keyDown('up')
+            #pyautogui.keyDown('up')
+            self.kb.press(Key.up)
 
         if 0 < move:
             for _ in range(abs(move)):
-                pyautogui.press('left', presses=1)
+                #pyautogui.press('left', presses=1)
+                self.kb.press(Key.left)
         elif 0 > move:
             for _ in range(abs(move)):
-                pyautogui.press('right', presses=1)
-        
-        pyautogui.keyDown('space')
+                #pyautogui.press('right', presses=1)
+                self.kb.press(Key.right)
 
-
+        # for _ in range(5):
+        #     self.kb.press(Key.down)
         
+        self.kb.press(Key.space)
+
 
 if __name__ == '__main__':
 
