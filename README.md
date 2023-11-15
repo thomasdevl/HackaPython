@@ -1,4 +1,6 @@
-HackPython - Tetis Bot
+# HackPython - Tetris Bot
+
+### 👑This bot won the 2023 BEST/CECI Hackaton of the Catholic University of Louvain La Neuve👑
 
 ## Description
 
