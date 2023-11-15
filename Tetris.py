@@ -1,24 +1,29 @@
 import numpy as np
 import puzzles as pz
+import copy as cp
 
 class Tetris:
-    def __init__(self, width=12, height=20, weight_y=1, weight_hole=2.5, weight_contact=1.5):
+    def __init__(self, width=12, height=20, weight_y=1, weight_hole=2.5, weight_contact=1.5, weight_next=0.5):
         self.width = width
         self.height = height
         
         self.weight_y = weight_y
         self.weight_hole = weight_hole
         self.weight_contact = weight_contact
+        self.weight_next = weight_next
+
+        self.next_piece = None
 
         self.board = np.zeros((self.height, self.width), dtype=np.int8)
         self.score = 0
         self.puzzle = pz.Puzzle()
 
-    def add_piece(self, piece: str):
+    def add_piece(self, piece: str, next_piece: str):
         """
         pre: the argument piece here is a character identificator of the piece
         post: place the piece in the board as best as possible
         """
+        self.next_piece = next_piece
         best_result = self.generate_max(piece)
         
         if best_result != None:
@@ -66,7 +71,7 @@ class Tetris:
                 if not self.check_position(limit, x, y):
                     # The piece is placed as low as possible for a given x and it checks
                     # if this placement is better than the previous ones
-                    score = self.get_score(shape, limit, x, y)
+                    score = self.get_score(dispo, limit, x, y)
                     
                     if best == None or score > best[0]:
                         best = (score, dispo, (x, y))
@@ -96,7 +101,8 @@ class Tetris:
                 
         return result
     
-    def get_score(self, shape: tuple, limit: tuple, x: int, y: int) -> int:
+    def get_score(self, dispo: tuple, limit: tuple, x: int, y: int) -> int:
+        shape = dispo[0]
         nholes = 0
         ncases_beyond = y
         nContactsSol = 0
@@ -131,16 +137,23 @@ class Tetris:
             for i in range(y - limit[k] + 1, self.height):
                 if self.board[i][j] == 0:
                     nholes += 1
+
+        result = 0
+
+        if self.next_piece != None:
+            test = self.copy()
+            test.place_piece(dispo, x, y)
+            result = test.generate_max(self.next_piece)[0]
                     
         ncases_beyond *= self.weight_y
         nholes *= self.weight_hole
         nContactsPillars *= self.weight_contact
+        result = result * self.weight_next
                     
-        return ncases_beyond - nholes + nContactsSol - nContactsPillars
+        return ncases_beyond - nholes + nContactsSol - nContactsPillars + result
 
-    def place_piece(self, position: tuple, x: int, y: int):
-        # position = (dis, (x, y))
-        shape = position[0]
+    def place_piece(self, dispo: tuple, x: int, y: int):
+        shape = dispo[0]
         height = len(shape)
         width = len(shape[0])
 
@@ -159,7 +172,6 @@ class Tetris:
                 self.board[y + i - height + 1][x + j] += 1
                 if np.sum(self.board[y + i - height + 1]) == self.width:
                     update_line[i] = y + i - height + 1
-
         for i in range(height):  
             self.update_line(update_line[i])
                         
@@ -170,7 +182,7 @@ class Tetris:
         """
         for i in range(line, 0, -1):
             self.board[i] = self.board[i - 1]
-            
+
         self.board[0] = np.zeros((1, self.width), dtype=np.int8)
 
     def print_board(self):
@@ -186,6 +198,11 @@ class Tetris:
         for _ in range(self.width):
             print(".", end="")
         print()
+
+    def copy(self):
+        result = Tetris(self.width, self.height, self.weight_y, self.weight_hole, self.weight_contact, self.weight_next)
+        result.board = cp.copy(self.board)
+        return result
         
 # if __name__ == "__main__":        
 #     t = Tetris(4, 4)

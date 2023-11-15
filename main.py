@@ -3,6 +3,7 @@ import time
 from rotation_dict import rot_dic
 from Tetris import Tetris
 from config import *
+from pynput.keyboard import Key, Controller
 
 pyautogui.PAUSE = 0
 
@@ -26,6 +27,7 @@ class TetrisBot:
         self.yellow = Bg_Yellow
         self.game_over_coord = (game_over_x, game_over_y)
         self.game_over_color = game_over_color
+        self.kb = Controller()
 
     def get_pixel_color(self, x, y):
         if 0 <= x < self.screen_width and 0 <= y < self.screen_height:
@@ -45,8 +47,8 @@ class TetrisBot:
         time.sleep(0.5)
         self.current_piece = self.get_pixel_color(self.first_piece_x, self.first_piece_y)
         self.next_piece = self.get_pixel_color(self.next_piece_x, self.next_piece_y)
-        print(f"first piece type {self.color_to_piece[self.current_piece]}")
-        print(f"next piece type {self.color_to_piece[self.next_piece]}")
+        #print(f"first piece type {self.color_to_piece[self.current_piece]}")
+        #print(f"next piece type {self.color_to_piece[self.next_piece]}")
 
         if self.color_to_piece[self.current_piece] == 'S' or self.color_to_piece[self.current_piece] == 'Z':
             print("bad start")
@@ -59,8 +61,7 @@ class TetrisBot:
             current_color = self.get_pixel_color(x, y)
             if current_color != target_color:
                 return True  
-
-            time.sleep(0.05)  
+            time.sleep(0.05)
 
         # Timeout
         return False  
@@ -68,12 +69,14 @@ class TetrisBot:
 
 
     def play(self):
-        # caclulate the best move
+        # calculate the best move
         try:
-            data = self.Tetris.add_piece(self.color_to_piece[self.current_piece])
+            # start_time = time.time()
+            data = self.Tetris.add_piece(self.color_to_piece[self.current_piece], self.color_to_piece[self.next_piece])
+            # print(f"Time to calculate: {time.time() - start_time}s")
         except KeyError:
             self.game_over()
-            return
+            return False
  
         # execute the best move
         move = self.calculate_moves(data)
@@ -86,11 +89,12 @@ class TetrisBot:
         self.current_piece = self.next_piece
         self.next_piece = self.get_pixel_color(self.next_piece_x, self.next_piece_y)
 
-        print(self.get_pixel_color(game_over_x, game_over_y))
+        #print(self.get_pixel_color(game_over_x, game_over_y))
         if self.get_pixel_color(game_over_x, game_over_y) == game_over_color:
             self.game_over()
-            return
-        self.play()
+            return False
+        
+        return True
 
     def game_over(self):
         time.sleep(1)
@@ -108,32 +112,38 @@ class TetrisBot:
         return 5 + decalage - data[0][0]
     
     def move_piece(self, move, rot):
-        print(self.color_to_piece[self.current_piece])
+        #print(self.color_to_piece[self.current_piece])
 
-        print(f"rotating {rot} times")
         for _ in range(rot):
-            pyautogui.keyDown('up')
+            #pyautogui.keyDown('up')
+            self.kb.press(Key.up)
 
         if 0 < move:
             for _ in range(abs(move)):
-                print("moving left")
-                pyautogui.press('left', presses=1)
+                #pyautogui.press('left', presses=1)
+                self.kb.press(Key.left)
         elif 0 > move:
             for _ in range(abs(move)):
-                print("moving right")
-                pyautogui.press('right', presses=1)
-        
-        print("dropping")
-        pyautogui.keyDown('space')
+                #pyautogui.press('right', presses=1)
+                self.kb.press(Key.right)
 
-
+        # for _ in range(5):
+        #     self.kb.press(Key.down)
         
+        self.kb.press(Key.space)
+
 
 if __name__ == '__main__':
 
     time.sleep(2)
-    
-    for _ in range (5):
+
+    for _ in range(10): 
         bot = TetrisBot()
         bot.start_game()
-        bot.play()
+
+        bool_value = True
+        i = 0
+        while bool_value:
+            # print(f"Pieces: {i}")
+            bool_value = bot.play()
+            i += 1    

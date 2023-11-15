@@ -4,10 +4,10 @@
 new_game_x, new_game_y = 697, 453
 
 # Value of the first piece spawn point
-first_piece_x, first_piece_y = 812, 434
+first_piece_x, first_piece_y = 834, 432
 
 # Value of the next piece spawn point
-next_piece_x, next_piece_y = 668, 579
+next_piece_x, next_piece_y =692, 576
 
 # Value of the accept panel 
 accept_x, accept_y = 920,216
